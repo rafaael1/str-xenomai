@@ -1,0 +1,15 @@
+ex03a
+Download ex03a.c and run the example program above. Describe and explain the resulting output.
+
+É executada a task1, sendo que ela assume controle total, logo é feita sua execução de loop completa iterando a variável global de 1 a 10, e depois que é executada a task2, 
+fazendo a execução de seu loop de iteração da variável global de 9 a 0.
+
+ex03b
+Exercise 3b.
+Use one or more semaphores such that variable "global" toggles between 0 and 1 (avoid the use of time or other global variables). Describe why your solution works.
+
+Bonus: develop a scable solution which works for multiple tasks and which does not depend on the start-up sequence of tasks.
+
+Adaptamos o código do ex03a utilizando semáforos para executar as duas tarefas alternadas, utilizando as diretivas rt_sem_p para bloquear e depois rt_sem_v para desbloquear, 
+e então fizemos uma solução escalável para numero grande de tarefas só que houve um problema que sempre a última tarefa não ficava alternada, executava todos seus passos de 
+iteração por último, depois de todas as outras terem sido executadas alternadas. Isso aconteceu sempre que passamos de 3 tarefas.
