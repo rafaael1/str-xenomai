@@ -19,14 +19,20 @@ RT_SEM mysync;
 #define SPIN_TIME	2e7
 #define CLOCK_RES 1e-9 
 
+void lowDemo(void *arg);
+void midDemo(void *arg);
+void highDemo(void *arg);
+
 void lowDemo(void *arg) {
 	int c;
-	rt_sem_p(&mysync,TM_INFINITE);
-
-
+	int j;
 	rt_sem_v(&mysync);
-//	rt_sem_p(&mysync, TM_INFINITE);
+	rt_sem_p(&mysync, TM_INFINITE);
 	printf("Low priority task locks semaphore\n");
+
+	// Inicia a tarefa de media prioridade
+	j=1;
+	rt_task_start(&(t[j]), &midDemo, &(j));
 
 	printf("Low priority task unlocks semaphore\n");
 	rt_sem_v(&mysync);
@@ -40,31 +46,32 @@ void lowDemo(void *arg) {
 	}
 
 	printf("..........................................Low priority task ends\n");
+
+	rt_sem_v(&mysync);
 }
 
 void midDemo(void *arg) {
 	int c;
-	rt_sem_p(&mysync,TM_INFINITE);
-
+	//rt_sem_p(&mysync,TM_INFINITE);
+	int k;
+	k=2;
+	rt_task_start(&(t[k]), &highDemo, &(k));
 
 	for (c = 0; c< N_RUN; c++) {
-        	printf("Medium priority task running\n");
-        }
+        printf("Medium priority task running\n");
+    }
 	printf("..........................................Medium priority task ends\n");
 }
 
 void highDemo(void *arg) {
 	int c;
-	rt_sem_p(&mysync,TM_INFINITE);
 
 	printf("High priority task tries to lock semaphore\n");
-	rt_sem_p(&mysync, TM_INFINITE);
-
+	rt_sem_p(&mysync,TM_INFINITE);
+	
 	for (c = 0; c< (N_RUN/4); c++) {
-		printf("Highw priority task tries to lock semaphore\n");
-
-		rt_sem_p(&mysync, TM_INFINITE);
 		printf("High priority task locks semaphore\n");
+		rt_sem_p(&mysync, TM_INFINITE);
 
 		printf("High priority task unlocks semaphore\n");
 		rt_sem_v(&mysync);
@@ -162,17 +169,21 @@ void startup() {
 //		rt_task_start(&(t[i]), &demo, &i);
 	}
 	// assign priorities to tasks
+	rt_task_set_priority(&(t[0]),LOW);
+	rt_task_set_priority(&(t[1]),MID);
+	rt_task_set_priority(&(t[2]),HIGH);
 	i=0;
-	rt_task_start(&(t[i]), &demo, &(i));
-	j=1;
-	rt_task_start(&(t[j]), &demo, &(j));
-	k=2;
+	rt_task_start(&(t[i]), &lowDemo, &(i));
+	/*j=1;
+	rt_task_start(&(t[j]), &demo, &(j));*/
+/*	k=2;
 	rt_task_start(&(t[k]), &demo, &(k));
+*/
 //	rt_task_set_priority(&(t[0]),LOW);
 //	rt_task_set_priority(&(t[1]),MID);
 //	rt_task_set_priority(&(t[2]),HIGH);
 	//printf("wake up all tasks\n");
-	rt_sem_broadcast(&mysync);
+	//rt_sem_broadcast(&mysync);
 }
 int main(int argc, char * argv[]) {
 	startup();
