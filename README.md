@@ -1,5 +1,5 @@
 # str-xenomai
-Projeto com Xenomai para disciplina de Sistemas de Tempo Real
+Práticas com Xenomai para disciplina de Sistemas de Tempo Real
 
 O Xenomai é um RTOS disponível para plataformas baseadas em linux, por isso o Xenomai pode ser rodado tanto em maquinas rodando alguma variação do linux como sistemas embardados como o Raspberry Pi que possibilita a programação de threads em tempo real, dentre outras características como o comprimento de deadlines e assim por diante…
 
